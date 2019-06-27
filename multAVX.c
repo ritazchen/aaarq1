@@ -10,7 +10,7 @@ void multiplica_matrizes(float* a, float* b, float* mult, int n);
 void imprime_matriz(float* matriz, int n);
 
 int main () {
-	int tam = 3000, newtam = tam;
+	int tam = 8, newtam = tam;
 	int n = tam*tam, i, j;
 
 	// Caso o tamanho da matriz não seja multiplo de 8, ele ajustará o tamanho ao próximo multiplo para poder fazer a multiplicação com AVX
@@ -56,13 +56,13 @@ int main () {
 	}
 
 	// Imprime as matrizes A e B
-	/*printf("A: \n");
+	printf("A: \n");
 	imprime_matriz(a, newtam);
 	printf("\n");
 
 	printf("B: \n");
 	imprime_matriz(b, newtam);
-	printf("\n");*/ 
+	printf("\n");
 
 	// Cálculo do tempo em segundos apenas da função da multiplicação e a transposta
   	//clock_t tempo = clock();
@@ -75,9 +75,9 @@ int main () {
     double iniSec = ini.tv_sec + ini.tv_nsec / SEC_AS_NANO;
     double fimSec = fim.tv_sec + fim.tv_nsec / SEC_AS_NANO;
   	// Imprime a matriz resultante
-  	/*printf("MULTIPLICAÇÃO: \n");
+  	printf("MULTIPLICAÇÃO: \n");
   	imprime_matriz(mult, newtam);
-	printf("\n");*/ 
+	printf("\n"); 
 
   	//printf("AVX: %.5f seg\n", tempoFinal);
     printf("AVX = %.5f s\n",(fimSec-iniSec));
@@ -109,7 +109,9 @@ void multiplica_matrizes(float* a, float* b, float* mult, int n) {
 		for (k = 0; k < tam; k += n) { 
 			for (j = 0; j < n; j += 8) {
 				reglinhaA = _mm256_load_ps(&a[i+j]);
+				//printf("a%d: %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f e %.2f\n", i*n+j, reglinhaA[0], reglinhaA[1], reglinhaA[2], reglinhaA[3], reglinhaA[4], reglinhaA[5], reglinhaA[6], reglinhaA[7]);
 				reglinhaB = _mm256_load_ps(&b[j+k]);
+				//printf("b%d: %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f e %.2f\n", j*n+k, reglinhaB[0], reglinhaB[1], reglinhaB[2], reglinhaB[3], reglinhaB[4], reglinhaB[5], reglinhaB[6], reglinhaB[7]);
 				resultado = _mm256_mul_ps(reglinhaA, reglinhaB);
 				resultado = _mm256_hadd_ps(resultado, resultado);
 				resultado = _mm256_hadd_ps(resultado, resultado);
@@ -119,6 +121,7 @@ void multiplica_matrizes(float* a, float* b, float* mult, int n) {
 			soma = 0.0;
 			aux++;
 		}
+		//printf("\n");
 	}
 }
 
